@@ -1,29 +1,43 @@
-
-
 export default class TomasController {
   constructor(jump) {
     /*
-    ** Jump is a function that accepts a jump strength (1-3) and makes the bird jump.
-    ** The higher the strength, the bigger the jump
     */
     this.jump = jump;
-    this.name = 'Tomás';
+    this.name = 'inaki';
   }
 
   loop(birdData, pipes, scene, dt) {
-    /*
-    ** This function is called every frame.
-    **
-    ** birdData = {x: int, y: int, speed: int }
-    ** pipes = array of Pipe
-    ** Pipe = {x: int, isTop: boolean, pipeHeight: int, pipeWidth: int}
-    ** scene: {width: 800, height: 600, floor: int (the floor height)}
-    ** dt: milliseconds elapsed since last update
-    */
 
-    if (birdData.y > scene.height - scene.floor - 10) {
-      this.jump(3);
+    const nextPipe = pipes.find(pipe => pipe.x + pipe.pipeWidth > birdData.x - 30);
+
+    let targetY = (scene.height - scene.floor) / 2;
+
+    if (nextPipe) {
+      if (nextPipe.isTop) {
+        targetY = nextPipe.pipeHeight + 120;
+      } else {
+        targetY = (scene.height - nextPipe.pipeHeight) - 70;
+      }
     }
+
+    const floorLimit = scene.height - scene.floor - 45;
+    let salto = birdData.y >= floorLimit;
+
+    if (nextPipe && !nextPipe.isTop && nextPipe.x < birdData.x + 35) {
+      const pipeTop = (scene.height - nextPipe.pipeHeight) - 45;
+      if (birdData.y >= pipeTop) {
+        salto = true;
+      }
+    }
+
+    if (salto) {
+      this.jump(1);
+      return;
+    }
+
+
+
+   
   }
 }
 
